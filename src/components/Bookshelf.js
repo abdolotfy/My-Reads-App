@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 
-// import Book from "./Book";
-import Book from "../components/Books"
+
+import Book from "../components/Book"
 
 const Bookshelf = props => {
-  const { books, title, setBooks } = props;
+  const { books, title,setShelfType, setBooks } = props;
+
+
 
 
   return (
@@ -13,15 +15,17 @@ const Bookshelf = props => {
       <div className="bookshelf-books">
         <ol className="books-grid">
           {books &&
-            books.map((book, index) => (
+            books.map((item, index) => (
               <li key={index}>
                 <Book
-                  title={book.title}
-                  authors={book.authors}
-                  imageUrl={book.imageLinks && book.imageLinks.thumbnail}
-                  bookshelf={book.shelf}
-                  book={book}
+                  title={item.title}
+                  authors={item.authors}
+                  setShelfType={setShelfType}
+                  URL={item.imageLinks && item.imageLinks.thumbnail}
+                  bookshelf={item.shelf}
+                  book={item}
                   setBooks={setBooks}
+                 
                 />
               </li>
             ))}

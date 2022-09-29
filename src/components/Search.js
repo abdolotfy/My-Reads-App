@@ -2,85 +2,74 @@ import React, { useState, useEffect } from "react";
 import * as BooksAPI from "../BooksAPI";
 import { useHistory } from "react-router-dom";
 
-import Book from "../components/Books"
+import Book from "./Book"
 
-
-
-
-
-const Search = props => {
-  const [searchText, setSearchText] = useState("");
-  const [searchedBooks, setSearchedBooks] = useState([]);
+// search page in a separte file 
+const Search = () => {
+  const [searchdata,setSearchData]=useState([]);
+   const[inputValue,setInputValue]=useState("");
+    const filterBooks = searchdata.filter((item) => (item.title.toLowerCase().includes(inputValue.toLowerCase())))
+   //console.log(data);
    const history = useHistory();
   
-  const handleSearchTextChange = event => {
-    // search if the user enter a characters 
-    if (searchText.length !== 0) {
-      BooksAPI.search(searchText).then(searchedBooks => {
-        if (!searchedBooks.error) {
-          BooksAPI.getAll().then(myBooks => {
-            setSearchedBooks(setDefaultShelves(searchedBooks, myBooks));
-          });
-        } else {
-          setSearchedBooks([]);
-        }
-      });
-      // if the user dosen't write any thing return empty [];
-    } else if (searchText.length === 0) {
-      setSearchedBooks([]);
-    }
-  };
-
-  const setDefaultShelves = (searchedBooksLocal, myBooks) => {
-    return searchedBooksLocal.map(book => {
-      for (let i = 0; i < myBooks.length; i++) {
-
-        if (myBooks[i].id === book.id) {
-          return { ...book, shelf: myBooks[i].shelf };
-        }
-      }
-      return { ...book, shelf: "none" };
-    });
-  };
-
-  // handle search 
-  useEffect(() => {
-    handleSearchTextChange();
-  }, [searchText]);
-
+  //console.log(filterBooks);
+  
+  useEffect(()=>{
+  BooksAPI.search(inputValue,20).then((data) => {if(!data.error){
+    setSearchData(data)
+  }})
+  
+  },[inputValue])
+  console.log(searchdata);
+  
   return (
-    <div className="search-books">
-      <div className="search-books-bar">
-        <button className="close-search" onClick={() => history.push("/")}>
-          Close
-        </button>
-        <div className="search-books-input-wrapper">
-          <input
-            type="text"
-            placeholder="Search by title or author"
-            onChange={event => setSearchText(event.target.value)}
-          />
-        </div>
-      </div>
-      <div className="search-books-results">
-        <ol className="books-grid">
-          {searchedBooks &&
-            searchedBooks.map((book, index) => (
-              <Book
-                key={index}
-                title={book.title}
-                authors={book.authors}
-                imageUrl={book.imageLinks && book.imageLinks.thumbnail}
-                bookshelf={book.shelf}
-                book={book}
-                isSearching
-              />
-            ))}
-        </ol>
-      </div>
-      
+  <>
+  <div className="search-books">
+          <div className="search-books-bar">
+            <a
+              className="close-search"
+              onClick={() => history.push("/")}
+            >
+              Close
+            </a>
+           
+          
+          
+    <div className="search-books-input-wrapper">
+      <input
+        type="text"
+        placeholder="Search by title, author, or ISBN"
+        value={inputValue}
+        onChange={((e)=> setInputValue(e.target.value))}
+  
+      />
     </div>
-  );
-};
+    </div>
+  
+  <div className="search-books-results">
+    <ol className="books-grid">
+    {searchdata && searchdata.map((item,index)=>{
+                      
+                        return(
+                        
+                          <Book key={index}
+                          title={item.title}
+                          authors={item.authors}
+                          URL={item.imageLinks && item.imageLinks.thumbnail}
+                          bookshelf={item.shelf}
+                          book={item}
+                          
+                          />   
+                      
+                     
+                        )
+                      } )}
+    
+    </ol>
+  </div>
+  </div>
+  </>
+  )
+  }
+  export default Search ;
 
-export default Search;
