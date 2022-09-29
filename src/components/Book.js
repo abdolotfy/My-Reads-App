@@ -1,9 +1,16 @@
 import React from "react";
+import { useState } from "react";
 import * as BooksAPI from "../BooksAPI";
 
 const Book = props => {
-  const { title,authors,URL,book,setBooks,setShelfType,isSearching,bookshelf} = props;
+  const { title,URL,book,setBooks,setShelfType,isSearching,bookshelf} = props;
+ 
+  const [authors,setAuthors]=useState("");
 
+  const name = (authors) => {
+   const author = authors.map(name => `${name}`)
+   setAuthors(author);
+  }
 
   const handleChange = (data,shelf) => {
     setShelfType(data)
@@ -61,7 +68,7 @@ const Book = props => {
       </div>
       <div className="book-title">{title}</div>
       <div className="book-authors">
-        {authors[0]}
+        {name} 
       </div>
     </div>
   );
