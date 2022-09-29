@@ -11,17 +11,19 @@ const Search = () => {
     const filterBooks = searchdata.filter((item) => (item.title.toLowerCase().includes(inputValue.toLowerCase())))
    //console.log(data);
    const history = useHistory();
+   const [savedBooks,setSavedBooks]=useState({});
   
-  //console.log(filterBooks);
-  
+
   useEffect(()=>{
   BooksAPI.search(inputValue,20).then((data) => {if(!data.error){
     setSearchData(data)
+  } else {
+   setSearchData([]);
   }})
   
   },[inputValue])
   console.log(searchdata);
-  
+ 
   return (
   <>
   <div className="search-books">
